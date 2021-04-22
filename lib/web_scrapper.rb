@@ -30,3 +30,35 @@ def mairie_christmas
   return  out.delete_if {|x| x == {""=>""}}
 end
 
+def chers_deputes
+  page_general = Nokogiri::HTML(URI.open('https://www2.assemblee-nationale.fr/deputes/liste/tableau'))
+  table = page_general.css('tbody/tr')
+  out = []
+  table.each do |element|
+    url = element.css('td/a')[0]['href']
+    page = Nokogiri::HTML(URI.open("https://www2.assemblee-nationale.fr#{url}"))
+    depute = Hash.new
+    arr_names = page.css('div[class="titre-bandeau-bleu clearfix"]/h1').text.split
+    if arr_names.size == 3
+      f_name = arr_names[1]
+      l_name = arr_names[2]
+    elsif arr_names.size > 3
+      f_name = arr_names[1]
+      l_name = arr_names[2..-1].join(" ")
+    end
+    depute["first_name"] = f_name
+    depute["last_name"] = l_name
+    begin
+      mail = page.css('dl[class="deputes-liste-attributs"]').css('dd')[3].css('ul')[0].css('li')[1].css('a').text
+    rescue NoMethodError
+      begin
+        mail = page.css('dl[class="deputes-liste-attributs"]').css('dd')[2].css('ul')[0].css('li')[1].css('a').text
+      rescue NoMethodError
+        mail = "Pas de mail"
+      end
+    end
+    depute["email"] = mail
+    out << depute
+  end
+  return out
+end

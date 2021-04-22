@@ -1,27 +1,16 @@
 require 'nokogiri'
 require 'open-uri'
 
-
-def scraping 
-    url = "https://coinmarketcap.com/all/views/all/"
-    page = Nokogiri::HTML(open(url))
-
-    
-    //*[@id="__next"]/div/div[1]/div[2]/div/div/div[2]/table/tbody/tr[1]/td[3]/div/a/div/div/p
-    nom = []
-    vameur = [] 
-
-
-
-    combo.each do |crypto|
-        puts 
+def crypto_scrapper 
+  page = Nokogiri::HTML(URI.open("https://coinmarketcap.com/all/views/all/"))
+  table = page.css("tbody/tr")
+    out = []
+    table.each do |element|
+      name = element.xpath("td[2]/div/a").text
+      price = element.xpath("td[5]/div/a").text
+      out << Hash[name=>price]
     end
-
-
+    return out
 end
 
-
-
-perform
-    adresse
-end
+puts crypto_scrapper

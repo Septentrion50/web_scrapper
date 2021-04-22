@@ -62,3 +62,11 @@ def chers_deputes
   end
   return out
 end
+
+def perform
+  puts crypto_scrapper
+  puts mairie_christmas
+  puts chers_deputes
+end
+
+perform

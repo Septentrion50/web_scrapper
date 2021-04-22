@@ -25,7 +25,6 @@ def mairie_christmas
       mail = table.css('tbody/tr[4]/td[2]').text
       out << Hash[name[0..-9].downcase=>mail] 
     rescue OpenURI::HTTPError, URI::InvalidURIError
-      puts "Not a valid link"
     end
   end
   return  out.delete_if {|x| x == {""=>""}}
